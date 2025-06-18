@@ -79,4 +79,43 @@ describe('ThreadRepositoryPostgres', () => {
       await expect(threadRepositoryPostgres.verifyThreadExists('thread-123')).resolves.not.toThrow(NotFoundError);
     });
   });
+
+  describe('getThreadDetail function', () => {
+    it('should return detailed thread correctly when thread exists', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding',
+      });
+    
+      const newThread = new NewThread({
+        title: 'Judul Thread',
+        body: 'Isi dari thread',
+        owner: 'user-123',
+      });
+    
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, () => '123');
+      await threadRepositoryPostgres.addThread(newThread);
+    
+      // Action
+      const thread = await threadRepositoryPostgres.getThreadDetail('thread-123');
+    
+      // Assert
+      expect(thread.id).toEqual('thread-123');
+      expect(thread.title).toEqual('Judul Thread');
+      expect(thread.body).toEqual('Isi dari thread');
+      expect(thread.username).toEqual('dicoding');
+      expect(thread.date).toBeInstanceOf(Date);
+      expect(thread.date.toISOString()).toEqual(thread.date.toISOString());
+    });
+  
+    it('should throw NotFoundError when thread does not exist', async () => {
+      // Arrange
+      const threadRepositoryPostgres = new ThreadRepositoryPostgres(pool, () => '123');
+  
+      // Action & Assert
+      await expect(threadRepositoryPostgres.getThreadDetail('thread-404'))
+        .rejects.toThrow(NotFoundError);
+    });
+  });
 });
