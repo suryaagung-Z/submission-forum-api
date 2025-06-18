@@ -14,15 +14,28 @@ const PasswordHash = require('../Applications/security/PasswordHash');
 const UserRepositoryPostgres = require('./repository/UserRepositoryPostgres');
 const BcryptPasswordHash = require('./security/BcryptPasswordHash');
 
-// use case
-const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
+// security
 const AuthenticationTokenManager = require('../Applications/security/AuthenticationTokenManager');
 const JwtTokenManager = require('./security/JwtTokenManager');
+
+// use case: users & auth
+const AddUserUseCase = require('../Applications/use_case/AddUserUseCase');
 const LoginUserUseCase = require('../Applications/use_case/LoginUserUseCase');
-const AuthenticationRepository = require('../Domains/authentications/AuthenticationRepository');
-const AuthenticationRepositoryPostgres = require('./repository/AuthenticationRepositoryPostgres');
 const LogoutUserUseCase = require('../Applications/use_case/LogoutUserUseCase');
 const RefreshAuthenticationUseCase = require('../Applications/use_case/RefreshAuthenticationUseCase');
+// use case: threads
+const AddThreadUseCase = require('../Applications/use_case/AddThreadUseCase');
+// use case: comments
+const AddCommentUseCase = require('../Applications/use_case/AddCommentUseCase');
+const DeleteCommentUseCase = require('../Applications/use_case/DeleteCommentUseCase');
+// repository domain
+const AuthenticationRepository = require('../Domains/authentications/AuthenticationRepository');
+const ThreadRepository = require('../Domains/threads/ThreadRepository');
+const CommentRepository = require('../Domains/comments/CommentRepository');
+// repository implementation
+const AuthenticationRepositoryPostgres = require('./repository/AuthenticationRepositoryPostgres');
+const ThreadRepositoryPostgres = require('./repository/ThreadRepositoryPostgres');
+const CommentRepositoryPostgres = require('./repository/CommentRepositoryPostgres');
 
 // creating container
 const container = createContainer();
@@ -73,6 +86,26 @@ container.register([
         {
           concrete: Jwt.token,
         },
+      ],
+    },
+  },
+  {
+    key: ThreadRepository.name,
+    Class: ThreadRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        { concrete: pool },
+        { concrete: nanoid },
+      ],
+    },
+  },
+  {
+    key: CommentRepository.name,
+    Class: CommentRepositoryPostgres,
+    parameter: {
+      dependencies: [
+        { concrete: pool },
+        { concrete: nanoid },
       ],
     },
   },
@@ -152,6 +185,38 @@ container.register([
       ],
     },
   },
+  {
+    key: AddThreadUseCase.name,
+    Class: AddThreadUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        { name: 'threadRepository', internal: ThreadRepository.name },
+      ],
+    },
+  },
+  {
+    key: AddCommentUseCase.name,
+    Class: AddCommentUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        { name: 'commentRepository', internal: CommentRepository.name },
+        { name: 'threadRepository', internal: ThreadRepository.name },
+      ],
+    },
+  },
+  {
+    key: DeleteCommentUseCase.name,
+    Class: DeleteCommentUseCase,
+    parameter: {
+      injectType: 'destructuring',
+      dependencies: [
+        { name: 'commentRepository', internal: CommentRepository.name },
+        { name: 'threadRepository', internal: ThreadRepository.name },
+      ],
+    },
+  }
 ]);
 
 module.exports = container;

@@ -20,7 +20,7 @@ describe('/users endpoint', () => {
         password: 'secret',
         fullname: 'Dicoding Indonesia',
       };
-       
+
       const server = await createServer(container);
 
       // Action

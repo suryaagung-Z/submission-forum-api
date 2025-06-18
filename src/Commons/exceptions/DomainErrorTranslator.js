@@ -17,6 +17,14 @@ DomainErrorTranslator._directories = {
   'REFRESH_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('refresh token harus string'),
   'DELETE_AUTHENTICATION_USE_CASE.NOT_CONTAIN_REFRESH_TOKEN': new InvariantError('harus mengirimkan token refresh'),
   'DELETE_AUTHENTICATION_USE_CASE.PAYLOAD_NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('refresh token harus string'),
+  'NEW_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('tidak dapat membuat thread karena properti yang dibutuhkan tidak ada'),
+  'NEW_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('tidak dapat membuat thread karena tipe data tidak sesuai'),
+  'ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('gagal membuat thread. Properti hasil tidak lengkap'),
+  'ADDED_THREAD.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('gagal membuat thread. Tipe data hasil tidak sesuai'),
+  'NEW_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('komentar gagal ditambahkan. Properti wajib tidak lengkap'),
+  'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('komentar gagal ditambahkan. Tipe data tidak sesuai'),
+  'ADDED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('komentar gagal diproses. Properti hasil tidak lengkap'),
+  'ADDED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('komentar gagal diproses. Tipe data hasil tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;

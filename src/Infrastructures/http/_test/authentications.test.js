@@ -22,8 +22,8 @@ describe('/authentications endpoint', () => {
         username: 'dicoding',
         password: 'secret',
       };
+      
       const server = await createServer(container);
-      // add user
       await server.inject({
         method: 'POST',
         url: '/users',
