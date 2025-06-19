@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node src/app.js",
     "start:dev": "nodemon src/app.js",
-    "test": "jest --setupFiles dotenv/config",
-    "test:watch": "jest --watchAll --coverage --setupFiles dotenv/config",
+    "test": "jest --setupFiles dotenv/config -i",
+    "test:watch": "jest --watchAll --coverage --setupFiles dotenv/config -i",
     "migrate": "node-pg-migrate",
-    "migrate:test": "node-pg-migrate --envPath .test.env",
+    "migrate:test": "node-pg-migrate -f config/database/test.json",
     "lint": "eslint ./src"
   },
   "keywords": [],
@@ -30,7 +30,7 @@
     "eslint": "^9.29.0",
     "globals": "^16.2.0",
     "jest": "^30.0.0",
-    "node-pg-migrate": "^8.0.2",
+    "node-pg-migrate": "^8.0.3",
     "nodemon": "^3.1.10"
   }
 }
