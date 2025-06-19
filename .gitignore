@@ -1,7 +1,6 @@
 node_modules
 package-lock.json
 .idea
-config/database/test.json
 coverage
 .env
-.test.env
+config/database/test.json
