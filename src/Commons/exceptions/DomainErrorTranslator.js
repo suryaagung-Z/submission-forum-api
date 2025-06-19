@@ -25,6 +25,10 @@ DomainErrorTranslator._directories = {
   'NEW_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('komentar gagal ditambahkan. Tipe data tidak sesuai'),
   'ADDED_COMMENT.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('komentar gagal diproses. Properti hasil tidak lengkap'),
   'ADDED_COMMENT.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('komentar gagal diproses. Tipe data hasil tidak sesuai'),
+  'NEW_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('balasan gagal ditambahkan. Properti wajib tidak lengkap'),
+  'NEW_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('balasan gagal ditambahkan. Tipe data tidak sesuai'),
+  'ADDED_REPLY.NOT_CONTAIN_NEEDED_PROPERTY': new InvariantError('balasan gagal diproses. Properti hasil tidak lengkap'),
+  'ADDED_REPLY.NOT_MEET_DATA_TYPE_SPECIFICATION': new InvariantError('balasan gagal diproses. Tipe data hasil tidak sesuai'),
 };
 
 module.exports = DomainErrorTranslator;

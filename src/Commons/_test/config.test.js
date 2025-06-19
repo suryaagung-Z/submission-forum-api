@@ -1,13 +1,13 @@
 describe('Commons - config', () => {
   const OLD_ENV = process.env;
 
+  afterAll(() => {
+    process.env = OLD_ENV;
+  });
+
   beforeEach(() => {
     jest.resetModules();
     process.env = { ...OLD_ENV };
-  });
-
-  afterAll(() => {
-    process.env = OLD_ENV;
   });
 
   it('should set localhost when NODE_ENV !== production', () => {

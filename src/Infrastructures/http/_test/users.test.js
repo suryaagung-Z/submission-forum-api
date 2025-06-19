@@ -3,7 +3,7 @@ const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
 const container = require('../../container');
 const createServer = require('../createServer');
 
-describe('/users endpoint', () => {
+describe('/users endpoint', () => {  
   afterAll(async () => {
     await pool.end();
   });

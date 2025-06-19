@@ -1,7 +1,7 @@
 const pool = require('../../database/postgres/pool');
-const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
-const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
 const UsersTableTestHelper = require('../../../../tests/UsersTableTestHelper');
+const ThreadsTableTestHelper = require('../../../../tests/ThreadsTableTestHelper');
+const CommentsTableTestHelper = require('../../../../tests/CommentsTableTestHelper');
 const CommentRepositoryPostgres = require('../CommentRepositoryPostgres');
 const NewComment = require('../../../Domains/comments/entities/NewComment');
 const AddedComment = require('../../../Domains/comments/entities/AddedComment');
@@ -9,21 +9,18 @@ const NotFoundError = require('../../../Commons/exceptions/NotFoundError');
 const AuthorizationError = require('../../../Commons/exceptions/AuthorizationError');
 
 describe('CommentRepositoryPostgres', () => {
-  beforeEach(async () => {
-    await CommentsTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
-  });
-  
   afterAll(async () => {
-    await CommentsTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await UsersTableTestHelper.cleanTable();
     await pool.end();
   });
 
+  afterEach(async () => {
+    await UsersTableTestHelper.cleanTable();
+    await ThreadsTableTestHelper.cleanTable();
+    await CommentsTableTestHelper.cleanTable();
+  });  
+
   describe('addComment function', () => {
-    it('should persist comment and return added comment correctly', async () => {
+    it('should persist comment in database correctly', async () => {
       // Arrange
       await UsersTableTestHelper.addUser({
         id: 'user-123',
@@ -31,26 +28,59 @@ describe('CommentRepositoryPostgres', () => {
         password: 'secret',
         fullname: 'Dicoding Indonesia',
       });
-
+  
       await ThreadsTableTestHelper.addThread({
         id: 'thread-123',
         title: 'judul',
         body: 'isi',
         owner: 'user-123',
       });
-
+  
       const newComment = new NewComment({
         content: 'komentar',
         threadId: 'thread-123',
         owner: 'user-123',
       });
-
-      const fakeIdGenerator = () => '123'; // stub
+  
+      const fakeIdGenerator = () => '123';
       const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
-
+  
+      // Action
+      await commentRepository.addComment(newComment);
+  
+      // Assert
+      const comments = await CommentsTableTestHelper.findCommentById('comment-123');
+      expect(comments).toHaveLength(1);
+    });
+  
+    it('should return added comment object correctly', async () => {
+      // Arrange
+      await UsersTableTestHelper.addUser({
+        id: 'user-123',
+        username: 'dicoding',
+        password: 'secret',
+        fullname: 'Dicoding Indonesia',
+      });
+  
+      await ThreadsTableTestHelper.addThread({
+        id: 'thread-123',
+        title: 'judul',
+        body: 'isi',
+        owner: 'user-123',
+      });
+  
+      const newComment = new NewComment({
+        content: 'komentar',
+        threadId: 'thread-123',
+        owner: 'user-123',
+      });
+  
+      const fakeIdGenerator = () => '123';
+      const commentRepository = new CommentRepositoryPostgres(pool, fakeIdGenerator);
+  
       // Action
       const addedComment = await commentRepository.addComment(newComment);
-
+  
       // Assert
       expect(addedComment).toStrictEqual(new AddedComment({
         id: 'comment-123',

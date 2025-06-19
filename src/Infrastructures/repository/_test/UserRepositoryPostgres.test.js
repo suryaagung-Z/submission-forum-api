@@ -6,12 +6,12 @@ const pool = require('../../database/postgres/pool');
 const UserRepositoryPostgres = require('../UserRepositoryPostgres');
 
 describe('UserRepositoryPostgres', () => {
-  afterEach(async () => {
-    await UsersTableTestHelper.cleanTable();
-  });
-
   afterAll(async () => {
     await pool.end();
+  });
+
+  afterEach(async () => {
+    await UsersTableTestHelper.cleanTable();
   });
 
   describe('verifyAvailableUsername function', () => {
@@ -35,37 +35,37 @@ describe('UserRepositoryPostgres', () => {
   });
 
   describe('addUser function', () => {
-    it('should persist register user and return registered user correctly', async () => {
+    it('should persist user in database correctly', async () => {
       // Arrange
       const registerUser = new RegisterUser({
         username: 'dicoding',
         password: 'secret_password',
         fullname: 'Dicoding Indonesia',
       });
-      const fakeIdGenerator = () => '123'; // stub!
+      const fakeIdGenerator = () => '123';
       const userRepositoryPostgres = new UserRepositoryPostgres(pool, fakeIdGenerator);
-
+  
       // Action
       await userRepositoryPostgres.addUser(registerUser);
-
+  
       // Assert
       const users = await UsersTableTestHelper.findUsersById('user-123');
       expect(users).toHaveLength(1);
     });
-
-    it('should return registered user correctly', async () => {
+  
+    it('should return registered user object correctly', async () => {
       // Arrange
       const registerUser = new RegisterUser({
         username: 'dicoding',
         password: 'secret_password',
         fullname: 'Dicoding Indonesia',
       });
-      const fakeIdGenerator = () => '123'; // stub!
+      const fakeIdGenerator = () => '123';
       const userRepositoryPostgres = new UserRepositoryPostgres(pool, fakeIdGenerator);
-
+  
       // Action
       const registeredUser = await userRepositoryPostgres.addUser(registerUser);
-
+  
       // Assert
       expect(registeredUser).toStrictEqual(new RegisteredUser({
         id: 'user-123',

@@ -4,23 +4,23 @@ const pool = require('../../database/postgres/pool');
 const AuthenticationRepositoryPostgres = require('../AuthenticationRepositoryPostgres');
 
 describe('AuthenticationRepositoryPostgres', () => {
-  afterEach(async () => {
-    await AuthenticationsTableTestHelper.cleanTable();
-  });
-
   afterAll(async () => {
     await pool.end();
   });
 
+  afterEach(async () => {
+    await AuthenticationsTableTestHelper.cleanTable();
+  });
+
   describe('addToken function', () => {
-    it('should add token to database', async () => {
+    it('should persist token to database correctly', async () => {
       // Arrange
       const authenticationRepository = new AuthenticationRepositoryPostgres(pool);
-      const token = 'token';
-
+      const token = 'token-sample';
+  
       // Action
       await authenticationRepository.addToken(token);
-
+  
       // Assert
       const tokens = await AuthenticationsTableTestHelper.findToken(token);
       expect(tokens).toHaveLength(1);

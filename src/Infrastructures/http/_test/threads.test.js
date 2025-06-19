@@ -6,24 +6,20 @@ const createServer = require('../createServer');
 const container = require('../../container');
 
 describe('/threads endpoint', () => {
+  afterAll(async () => {
+    await pool.end();
+  });
+
   afterEach(async () => {
     await UsersTableTestHelper.cleanTable();
     await ThreadsTableTestHelper.cleanTable();
     await CommentsTableTestHelper.cleanTable();
-  });
-  
-  afterAll(async () => {
-    await UsersTableTestHelper.cleanTable();
-    await ThreadsTableTestHelper.cleanTable();
-    await CommentsTableTestHelper.cleanTable();
-    await pool.end();
-  });
+  });  
 
   describe('when POST /threads', () => {
-    it('should return 201 and the added thread', async () => {
+    it('should response 201 and return added thread', async () => {
       const server = await createServer(container);
-
-      // Register user
+  
       await server.inject({
         method: 'POST',
         url: '/users',
@@ -33,8 +29,7 @@ describe('/threads endpoint', () => {
           fullname: 'User Thread',
         },
       });
-
-      // Login user
+  
       const loginResponse = await server.inject({
         method: 'POST',
         url: '/authentications',
@@ -43,10 +38,9 @@ describe('/threads endpoint', () => {
           password: 'rahasia',
         },
       });
-
+  
       const { data: { accessToken } } = JSON.parse(loginResponse.payload);
-
-      // Act
+  
       const response = await server.inject({
         method: 'POST',
         url: '/threads',
@@ -58,18 +52,21 @@ describe('/threads endpoint', () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
-      // Assert
+  
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(201);
       expect(responseJson.status).toEqual('success');
       expect(responseJson.data.addedThread).toBeDefined();
-      expect(responseJson.data.addedThread.title).toEqual('Sebuah thread');
+      expect(responseJson.data.addedThread).toEqual(expect.objectContaining({
+        id: expect.any(String),
+        title: 'Sebuah thread',
+        owner: expect.any(String),
+      }));
     });
 
-    it('should return 400 when payload missing required property (no title)', async () => {
+    it('should response 400 when payload missing required property', async () => {
       const server = await createServer(container);
-
+  
       await server.inject({
         method: 'POST',
         url: '/users',
@@ -79,7 +76,7 @@ describe('/threads endpoint', () => {
           fullname: 'User No Title',
         },
       });
-
+  
       const loginResponse = await server.inject({
         method: 'POST',
         url: '/authentications',
@@ -88,9 +85,9 @@ describe('/threads endpoint', () => {
           password: 'rahasia',
         },
       });
-
+  
       const { data: { accessToken } } = JSON.parse(loginResponse.payload);
-
+  
       const response = await server.inject({
         method: 'POST',
         url: '/threads',
@@ -101,16 +98,16 @@ describe('/threads endpoint', () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
+  
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toBeDefined();
     });
 
-    it('should return 400 when payload has invalid data type', async () => {
+    it('should response 400 when payload has invalid data type', async () => {
       const server = await createServer(container);
-
+  
       await server.inject({
         method: 'POST',
         url: '/users',
@@ -120,7 +117,7 @@ describe('/threads endpoint', () => {
           fullname: 'User Salah Tipe',
         },
       });
-
+  
       const loginResponse = await server.inject({
         method: 'POST',
         url: '/authentications',
@@ -129,9 +126,9 @@ describe('/threads endpoint', () => {
           password: 'rahasia',
         },
       });
-
+  
       const { data: { accessToken } } = JSON.parse(loginResponse.payload);
-
+  
       const response = await server.inject({
         method: 'POST',
         url: '/threads',
@@ -143,16 +140,16 @@ describe('/threads endpoint', () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-
+  
       const responseJson = JSON.parse(response.payload);
       expect(response.statusCode).toEqual(400);
       expect(responseJson.status).toEqual('fail');
       expect(responseJson.message).toBeDefined();
     });
 
-    it('should return 401 when no access token provided', async () => {
+    it('should response 401 when no access token provided', async () => {
       const server = await createServer(container);
-
+  
       const response = await server.inject({
         method: 'POST',
         url: '/threads',
@@ -161,7 +158,7 @@ describe('/threads endpoint', () => {
           body: 'Isi tanpa autentikasi',
         },
       });
-
+  
       expect(response.statusCode).toEqual(401);
     });
   });

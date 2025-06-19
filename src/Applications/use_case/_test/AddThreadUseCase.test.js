@@ -19,18 +19,17 @@ describe('AddThreadUseCase', () => {
     });
 
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.addThread = jest.fn()
-      .mockResolvedValue(expectedAddedThread);
+    mockThreadRepository.addThread = jest.fn().mockResolvedValue(expectedAddedThread);
 
     const addThreadUseCase = new AddThreadUseCase({
       threadRepository: mockThreadRepository,
     });
 
     // Act
-    const addedThread = await addThreadUseCase.execute(useCasePayload);
+    const result = await addThreadUseCase.execute(useCasePayload);
 
     // Assert
-    expect(addedThread).toStrictEqual(expectedAddedThread);
+    expect(result).toStrictEqual(expectedAddedThread);
     expect(mockThreadRepository.addThread)
       .toHaveBeenCalledWith(new NewThread(useCasePayload));
   });
