@@ -275,10 +275,24 @@ describe('ReplyRepositoryPostgres', () => {
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
       const result = await replyRepository.getRepliesByCommentIds(['comment-1', 'comment-2']);
 
-      expect(result).toHaveLength(2);
-      expect(result[0].id).toEqual('reply-1');
-      expect(result[1].id).toEqual('reply-2');
-      expect(result[1].is_delete).toBe(true);
+      expect(result).toEqual([
+        {
+          id: 'reply-1',
+          comment_id: 'comment-1',
+          content: 'balasan 1',
+          date: expect.any(Date),
+          is_delete: false,
+          username: 'dicoding',
+        },
+        {
+          id: 'reply-2',
+          comment_id: 'comment-1',
+          content: 'balasan 2',
+          date: expect.any(Date),
+          is_delete: true,
+          username: 'dicoding',
+        },
+      ]);      
     });
   });
 });

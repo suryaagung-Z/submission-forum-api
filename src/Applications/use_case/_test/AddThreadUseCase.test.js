@@ -14,12 +14,18 @@ describe('AddThreadUseCase', () => {
 
     const expectedAddedThread = new AddedThread({
       id: 'thread-123',
-      title: useCasePayload.title,
-      owner: useCasePayload.owner,
+      title: 'Sebuah thread',
+      owner: 'user-123',
     });
 
     const mockThreadRepository = new ThreadRepository();
-    mockThreadRepository.addThread = jest.fn().mockResolvedValue(expectedAddedThread);
+    mockThreadRepository.addThread = jest.fn().mockResolvedValue(
+      new AddedThread({
+        id: 'thread-123',
+        title: 'Sebuah thread',
+        owner: 'user-123',
+      })
+    );
 
     const addThreadUseCase = new AddThreadUseCase({
       threadRepository: mockThreadRepository,

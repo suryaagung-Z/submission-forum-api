@@ -17,8 +17,8 @@ describe('AddReplyUseCase', () => {
 
     const expectedAddedReply = new AddedReply({
       id: 'reply-123',
-      content: useCasePayload.content,
-      owner: useCasePayload.owner,
+      content: 'balasan bagus!',
+      owner: 'user-123',
     });
 
     const mockCommentRepository = new CommentRepository();
@@ -27,7 +27,13 @@ describe('AddReplyUseCase', () => {
 
     mockThreadRepository.verifyThreadExists = jest.fn().mockResolvedValue();
     mockCommentRepository.verifyCommentExists = jest.fn().mockResolvedValue();
-    mockReplyRepository.addReply = jest.fn().mockResolvedValue(expectedAddedReply);
+    mockReplyRepository.addReply = jest.fn().mockResolvedValue(
+      new AddedReply({
+        id: 'reply-123',
+        content: 'balasan bagus!',
+        owner: 'user-123',
+      })
+    );
 
     const addReplyUseCase = new AddReplyUseCase({
       commentRepository: mockCommentRepository,
@@ -39,14 +45,16 @@ describe('AddReplyUseCase', () => {
     const addedReply = await addReplyUseCase.execute(useCasePayload);
 
     // Assert
-    expect(mockThreadRepository.verifyThreadExists).toHaveBeenCalledWith(useCasePayload.threadId);
-    expect(mockCommentRepository.verifyCommentExists).toHaveBeenCalledWith(useCasePayload.commentId);
+    expect(addedReply).toStrictEqual(expectedAddedReply);
+    expect(mockThreadRepository.verifyThreadExists)
+      .toHaveBeenCalledWith(useCasePayload.threadId);
+    expect(mockCommentRepository.verifyCommentExists)
+      .toHaveBeenCalledWith(useCasePayload.commentId);
     expect(mockReplyRepository.addReply)
       .toHaveBeenCalledWith(new NewReply({
         content: useCasePayload.content,
         commentId: useCasePayload.commentId,
         owner: useCasePayload.owner,
       }));
-    expect(addedReply).toStrictEqual(expectedAddedReply);
   });
 });

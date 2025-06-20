@@ -23,6 +23,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     const result = await this._pool.query(query);
+
     return new AddedReply(result.rows[0]);
   }
 
@@ -42,6 +43,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rowCount) {
       throw new NotFoundError('Reply tidak ditemukan');
     }
@@ -54,6 +56,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     const result = await this._pool.query(query);
+
     if (!result.rowCount) {
       throw new NotFoundError('Reply tidak ditemukan');
     }
@@ -76,6 +79,7 @@ class ReplyRepositoryPostgres extends ReplyRepository {
     };
 
     const result = await this._pool.query(query);
+
     return result.rows;
   }
 }

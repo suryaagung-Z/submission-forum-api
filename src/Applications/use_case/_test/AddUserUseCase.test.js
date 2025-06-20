@@ -5,9 +5,6 @@ const PasswordHash = require('../../security/PasswordHash');
 const AddUserUseCase = require('../AddUserUseCase');
 
 describe('AddUserUseCase', () => {
-  /**
-   * Menguji apakah use case mampu mengoskestrasikan langkah demi langkah dengan benar.
-   */
   it('should orchestrating the add user action correctly', async () => {
     // Arrange
     const useCasePayload = {
@@ -16,46 +13,45 @@ describe('AddUserUseCase', () => {
       fullname: 'Dicoding Indonesia',
     };
 
-    const mockRegisteredUser = new RegisteredUser({
+    const expectedRegisteredUser = new RegisteredUser({
       id: 'user-123',
-      username: useCasePayload.username,
-      fullname: useCasePayload.fullname,
+      username: 'dicoding',
+      fullname: 'Dicoding Indonesia',
     });
 
-    /** creating dependency of use case */
     const mockUserRepository = new UserRepository();
     const mockPasswordHash = new PasswordHash();
 
-    /** mocking needed function */
-    mockUserRepository.verifyAvailableUsername = jest.fn()
-      .mockImplementation(() => Promise.resolve());
-    mockPasswordHash.hash = jest.fn()
-      .mockImplementation(() => Promise.resolve('encrypted_password'));
-    mockUserRepository.addUser = jest.fn()
-      .mockImplementation(() => Promise.resolve(mockRegisteredUser));
+    mockUserRepository.verifyAvailableUsername = jest.fn().mockResolvedValue();
+    mockPasswordHash.hash = jest.fn().mockResolvedValue('encrypted_password');
 
-    /** creating use case instance */
-    const getUserUseCase = new AddUserUseCase({
+    mockUserRepository.addUser = jest.fn().mockResolvedValue(
+      new RegisteredUser({
+        id: 'user-123',
+        username: 'dicoding',
+        fullname: 'Dicoding Indonesia',
+      })
+    );
+
+    const addUserUseCase = new AddUserUseCase({
       userRepository: mockUserRepository,
       passwordHash: mockPasswordHash,
     });
 
     // Action
-    const registeredUser = await getUserUseCase.execute(useCasePayload);
+    const registeredUser = await addUserUseCase.execute(useCasePayload);
 
     // Assert
-    expect(registeredUser).toStrictEqual(new RegisteredUser({
-      id: 'user-123',
-      username: useCasePayload.username,
-      fullname: useCasePayload.fullname,
-    }));
-
-    expect(mockUserRepository.verifyAvailableUsername).toHaveBeenCalledWith(useCasePayload.username);
-    expect(mockPasswordHash.hash).toHaveBeenCalledWith(useCasePayload.password);
-    expect(mockUserRepository.addUser).toHaveBeenCalledWith(new RegisterUser({
-      username: useCasePayload.username,
-      password: 'encrypted_password',
-      fullname: useCasePayload.fullname,
-    }));
+    expect(registeredUser).toStrictEqual(expectedRegisteredUser);
+    expect(mockUserRepository.verifyAvailableUsername)
+      .toHaveBeenCalledWith(useCasePayload.username);
+    expect(mockPasswordHash.hash)
+      .toHaveBeenCalledWith(useCasePayload.password);
+    expect(mockUserRepository.addUser)
+      .toHaveBeenCalledWith(new RegisterUser({
+        username: 'dicoding',
+        password: 'encrypted_password',
+        fullname: 'Dicoding Indonesia',
+      }));
   });
 });
