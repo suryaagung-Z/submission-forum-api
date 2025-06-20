@@ -114,7 +114,8 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepository = new CommentRepositoryPostgres(pool, {});
     
       // Act & Assert
-      await expect(commentRepository.verifyCommentExists('comment-123')).resolves.not.toThrow();
+      await expect(commentRepository.verifyCommentExists('comment-123'))
+        .resolves.not.toThrow(NotFoundError);
     });    
   });
 
@@ -151,7 +152,8 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepository = new CommentRepositoryPostgres(pool, {});
     
       // Act & Assert
-      await expect(commentRepository.verifyCommentOwner('comment-123', 'user-123')).resolves.not.toThrow();
+      await expect(commentRepository.verifyCommentOwner('comment-123', 'user-123'))
+        .resolves.not.toThrow(AuthorizationError);
     });    
   });
 
@@ -170,7 +172,7 @@ describe('CommentRepositoryPostgres', () => {
       const commentRepository = new CommentRepositoryPostgres(pool, {});
     
       // Act & Assert
-      await expect(commentRepository.deleteComment('comment-123')).resolves.not.toThrow();
+      await commentRepository.deleteComment('comment-123');
     
       const [comment] = await CommentsTableTestHelper.findCommentById('comment-123');
       expect(comment.is_delete).toBe(true);

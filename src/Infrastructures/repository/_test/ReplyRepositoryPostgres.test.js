@@ -131,7 +131,8 @@ describe('ReplyRepositoryPostgres', () => {
   describe('verifyReplyExists function', () => {
     it('should throw NotFoundError when reply does not exist', async () => {
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
-      await expect(replyRepository.verifyReplyExists('reply-404')).rejects.toThrow(NotFoundError);
+      await expect(replyRepository.verifyReplyExists('reply-404'))
+        .rejects.toThrow(NotFoundError);
     });
 
     it('should not throw NotFoundError when reply exists', async () => {
@@ -160,14 +161,16 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
-      await expect(replyRepository.verifyReplyExists('reply-123')).resolves.not.toThrow();
+      await expect(replyRepository.verifyReplyExists('reply-123'))
+        .resolves.not.toThrow(NotFoundError);
     });
   });
 
   describe('verifyReplyOwner function', () => {
     it('should throw NotFoundError when reply not found', async () => {
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
-      await expect(replyRepository.verifyReplyOwner('reply-x', 'user-x')).rejects.toThrow(NotFoundError);
+      await expect(replyRepository.verifyReplyOwner('reply-x', 'user-x'))
+        .rejects.toThrow(NotFoundError);
     });
 
     it('should throw AuthorizationError when owner mismatch', async () => {
@@ -196,7 +199,8 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
-      await expect(replyRepository.verifyReplyOwner('reply-123', 'user-456')).rejects.toThrow(AuthorizationError);
+      await expect(replyRepository.verifyReplyOwner('reply-123', 'user-456'))
+        .rejects.toThrow(AuthorizationError);
     });
 
     it('should not throw error when reply exists and owner matches', async () => {
@@ -225,7 +229,10 @@ describe('ReplyRepositoryPostgres', () => {
       });
 
       const replyRepository = new ReplyRepositoryPostgres(pool, () => '123');
-      await expect(replyRepository.verifyReplyOwner('reply-123', 'user-123')).resolves.not.toThrow();
+      await expect(replyRepository.verifyReplyOwner('reply-123', 'user-123'))
+        .resolves.not.toThrow(NotFoundError);
+      await expect(replyRepository.verifyReplyOwner('reply-123', 'user-123'))
+        .resolves.not.toThrow(AuthorizationError);
     });
   });
 

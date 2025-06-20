@@ -2,8 +2,8 @@ const AddedThread = require('../AddedThread');
 
 describe('AddedThread entity', () => {
   it('should throw error if payload not contain needed property', () => {
-    expect(() => new AddedThread({ id: 'thread-123', title: 'judul' }))
-      .toThrow('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
+    const payload = { id: 'thread-123', title: 'judul' };
+    expect(() => new AddedThread(payload)).toThrow('ADDED_THREAD.NOT_CONTAIN_NEEDED_PROPERTY');
   });
 
   it('should throw error if payload not meet data type specification', () => {
