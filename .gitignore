@@ -4,3 +4,4 @@ package-lock.json
 coverage
 .env
 config/database/test.json
+submission-forum-api.pem
